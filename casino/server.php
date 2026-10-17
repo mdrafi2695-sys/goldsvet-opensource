@@ -12,10 +12,14 @@ $uri = urldecode(
 );
 
 // This file allows us to emulate Apache's "mod_rewrite" functionality from the
-// built-in PHP web server. This provides a convenient way to test a Laravel
-// application without having installed a "real" web server software here.
+// built-in PHP web server.
 if ($uri !== '/' && file_exists(__DIR__.$uri)) {
     return false;
 }
 
-require_once __DIR__.'/index.php';
+// Check index.php in current directory, otherwise load bootstrap
+if (file_exists(__DIR__.'/index.php')) {
+    require_once __DIR__.'/index.php';
+} else {
+    require_once __DIR__.'/bootstrap/app.php';
+}

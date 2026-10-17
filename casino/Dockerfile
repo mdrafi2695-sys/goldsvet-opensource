@@ -20,8 +20,8 @@ RUN a2enmod rewrite headers
 # Copy application files
 COPY . /var/www/html/
 
-# Set DocumentRoot to point directly to /var/www/html (since index/server files are in root)
-RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf
+# Copy index.php from parent directory into /var/www/html/ if it exists there
+RUN if [ -f /var/www/index.php ]; then cp /var/www/index.php /var/www/html/index.php; fi
 
 # Run composer install
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts --no-interaction
@@ -30,7 +30,7 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Apache VirtualHost Configuration to use server.php as fallback if index.php is missing
+# Apache VirtualHost Configuration
 RUN echo '<Directory /var/www/html/>\n\
     DirectoryIndex index.php server.php\n\
     Options FollowSymLinks\n\

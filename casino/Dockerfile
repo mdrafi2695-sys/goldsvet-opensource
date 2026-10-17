@@ -19,17 +19,13 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
+# అపాచీ డాక్యుమెంట్ రూట్‌ను public ఫోల్డర్‌కి మార్చడం
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+RUN sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts --no-interaction
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
-
-RUN echo "<Directory /var/www/html/>\n\
-    DirectoryIndex index.php server.php\n\
-    Options FollowSymLinks\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>" > /etc/apache2/conf-available/custom.conf \
-    && a2enconf custom
 
 EXPOSE 80

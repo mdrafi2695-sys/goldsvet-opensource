@@ -15,18 +15,21 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN a2enmod rewrite headers
 
+# అపాచీ డాక్యుమెంట్ రూట్‌ను నేరుగా public ఫోల్డర్‌కి మార్చడం
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts --no-interaction
 
+# పర్మిషన్స్ సమస్య రాకుండా సెట్ చేయడం
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/storage \
-    && chmod -R 777 /var/www/html/bootstrap/cache \
-    && chmod -R 755 /var/www/html
+    && chmod -R 777 /var/www/html/bootstrap/cache
 
 EXPOSE 80

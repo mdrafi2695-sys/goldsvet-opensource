@@ -11,11 +11,9 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 RUN a2enmod rewrite headers
 
-# అపాచీ సర్వర్ రూట్‌ను ఆటోమేటిక్‌గా public ఫోల్డర్‌కి సెట్ చేయడం
+# అపాచీ రూట్‌ను పబ్లిక్ ఫోల్డర్‌కి సెట్ చేయడం
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html/public\n\
@@ -32,10 +30,7 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
-# కంపోజర్ డిపెండెన్సీలను ఆటోమేటిక్‌గా ఇన్‌స్టాల్ చేయడం
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts --no-interaction
-
-# స్టోరేజ్ మరియు క్యాష్ పర్మిషన్స్ ఆటోమేటిక్‌గా ఫుల్ యాక్సెస్ ఇవ్వడం
+# పర్మిషన్స్ సెట్ చేయడం
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 storage \
     && chmod -R 777 bootstrap/cache

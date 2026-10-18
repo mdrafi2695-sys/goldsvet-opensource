@@ -15,7 +15,26 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN a2enmod rewrite headers
 
-# అపాచీ రూట్‌ను నేరుగా public ఫోల్డర్‌కి మార్చడం (Root Directory casino కాబట్టి ఇది సరిపోతుంది)
+WORKDIR /var/www/html
+
+COPY . /var/www/html/
+
+# public ఫోల్డర్ లేకపోతే క్రియేట్ చేసి, index.php ని సెట్ చేయడం
+RUN mkdir -p public && \
+    if [ ! -f public/index.php ]; then \
+        echo "<?php \n\
+        define('LARAVEL_START', microtime(true)); \n\
+        require __DIR__.'/../vendor/autoload.php'; \n\
+        \$app = require_once __DIR__.'/../bootstrap/app.php'; \n\
+        \$kernel = \$app->make(Illuminate\Contracts\Http\Kernel::class); \n\
+        \$response = \$kernel->handle( \n\
+            \$request = Illuminate\Http\Request::capture() \n\
+        );\n\
+        \$response->send(); \n\
+        \$kernel->terminate(\$request, \$response);" > public/index.php; \n\
+    fi
+
+# అపాచీ రూట్‌ను public కి మార్చడం
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html/public\n\
@@ -28,15 +47,11 @@ RUN echo '<VirtualHost *:80>\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-WORKDIR /var/www/html
-
-COPY . /var/www/html/
-
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-scripts --no-interaction
 
 # పర్మిషన్స్ సెట్ చేయడం
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 /var/www/html/storage \
-    && chmod -R 777 /var/www/html/bootstrap/cache
+    && chmod -R 777 storage \
+    && chmod -R 777 bootstrap/cache
 
 EXPOSE 80

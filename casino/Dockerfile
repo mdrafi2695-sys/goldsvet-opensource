@@ -15,7 +15,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN a2enmod rewrite headers
 
-# అపాచీ వర్చువల్ హోస్ట్ కాన్ఫిగరేషన్‌ను నేరుగా public ఫోల్డర్‌కి మార్చడం
+# అపాచీ రూట్‌ను నేరుగా public ఫోల్డర్‌కి మార్చడం (Root Directory casino కాబట్టి ఇది సరిపోతుంది)
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html/public\n\

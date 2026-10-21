@@ -13,24 +13,24 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite headers
 
-# అపాచీ రూట్‌ను పబ్లిక్ ఫోల్డర్‌కి సెట్ చేయడం
+# Apache DocumentRoot Fix
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
-    DocumentRoot /var/www/html/public\n\
-    <Directory /var/www/html/public>\n\
+    DocumentRoot /var/www/html\n\
+    <Directory /var/www/html>\n\
         Options Indexes FollowSymLinks\n\
         AllowOverride All\n\
         Require all granted\n\
     </Directory>\n\
     ErrorLog ${APACHE_LOG_DIR}/error.log\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+</VirtualHost>' > /etc/apache2/sites-available/001-default.conf
 
 WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
-# పర్మిషన్స్ సెట్ చేయడం
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 storage \
     && chmod -R 777 bootstrap/cache

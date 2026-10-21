@@ -37,14 +37,15 @@ COPY . /var/www/html/
 # Direct install inside casino directory
 RUN cd casino && composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
-# Clear all cached configurations and old configs
+# Clear config cache
 RUN rm -f casino/bootstrap/cache/config.php casino/bootstrap/cache/services.php
 RUN cd casino && php artisan config:clear || true
 
 RUN chown -R www-data:www-data /var/www/html
 
+# Make entrypoint script executable
+RUN chmod +x /var/www/html/entrypoint.sh
+
 EXPOSE 10000
 
-# Start server and run migrations automatically at runtime
-CMD bash -c "cd casino && php artisan migrate --force || true; apache2-foreground"
-
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]

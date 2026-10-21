@@ -35,7 +35,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # Direct install inside casino directory
-RUN cd casino && composer install --no-dev --optimize-autoloader --no-interaction
+RUN cd casino && composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
+
 
 RUN chown -R www-data:www-data /var/www/html
 

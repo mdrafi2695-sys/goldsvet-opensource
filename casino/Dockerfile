@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite headers
 
-# Apache DocumentRoot Configuration
+# DocumentRoot correct setup
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html\n\
@@ -31,7 +31,6 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
-# Permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80

@@ -37,6 +37,13 @@ COPY . /var/www/html/
 # Direct install inside casino directory
 RUN cd casino && composer install --no-dev --no-scripts --optimize-autoloader --no-interaction
 
+# Clear all cached configurations and old configs
+RUN rm -f casino/bootstrap/cache/config.php casino/bootstrap/cache/services.php
+RUN cd casino && php artisan config:clear || true
+
+# Run database migrations automatically
+RUN cd casino && php artisan migrate --force
+
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 10000

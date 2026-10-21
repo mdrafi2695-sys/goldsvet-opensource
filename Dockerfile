@@ -17,7 +17,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN a2enmod rewrite headers
 
-RUN echo '<VirtualHost *:80>\n\
+RUN echo '<VirtualHost *:10000
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html\n\
     <Directory /var/www/html>\n\
@@ -40,4 +40,4 @@ RUN cd casino && composer install --no-dev --no-scripts --optimize-autoloader --
 
 RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 80
+EXPOSE 10000

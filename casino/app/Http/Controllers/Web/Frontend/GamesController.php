@@ -123,11 +123,11 @@ namespace VanguardLTE\Http\Controllers\Web\Frontend
                             $games = $games->where('id', 0);
                         }
                     }
-                    if( $category1 == 'hot' ) 
-                    {
-                        $hot_games = \VanguardLTE\Lib\GetHotNewMyGames::get_hot_games();
-                        if( count($hot_games) ) 
-                        {
+                    if( $category1 == 'hot' ) $cat_ids = \VanguardLTE\GameCategory::whereIn('game_id', \VanguardLTE\Game::where([
+    'view' => 1,
+    'shop_id' => $shop_id
+])->pluck('original_id'))->groupBy('category_id')->pluck('category_id');
+                    
                             $games = $games->whereIn('id', $hot_games);
                         }
                         else

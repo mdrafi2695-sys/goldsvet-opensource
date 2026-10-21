@@ -46,4 +46,5 @@ RUN chown -R www-data:www-data /var/www/html
 EXPOSE 10000
 
 # Start server and run migrations automatically at runtime
-CMD bash -c "cd casino && php artisan migrate --force && apache2-foreground"
+CMD bash -c "cd casino && php artisan migrate --force || true; apache2-foreground"
+

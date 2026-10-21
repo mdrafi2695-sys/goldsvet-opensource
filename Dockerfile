@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 RUN a2enmod rewrite headers
 
 RUN echo '<VirtualHost *:80>\n\
@@ -30,6 +33,9 @@ RUN echo '<VirtualHost *:80>\n\
 WORKDIR /var/www/html
 
 COPY . /var/www/html/
+
+# Automatically run composer install to generate vendor folder
+RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader --no-interaction; fi
 
 RUN chown -R www-data:www-data /var/www/html
 

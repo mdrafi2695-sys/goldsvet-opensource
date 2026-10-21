@@ -34,8 +34,8 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html/
 
-# Automatically run composer install to generate vendor folder
-RUN if [ -f composer.json ]; then composer install --no-dev --optimize-autoloader --no-interaction; fi
+# Direct install inside casino directory
+RUN cd casino && composer install --no-dev --optimize-autoloader --no-interaction
 
 RUN chown -R www-data:www-data /var/www/html
 

@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite headers
 
-# Apache DocumentRoot Fix
+# Apache DocumentRoot Configuration
 RUN echo '<VirtualHost *:80>\n\
     ServerAdmin webmaster@localhost\n\
     DocumentRoot /var/www/html\n\
@@ -22,6 +22,7 @@ RUN echo '<VirtualHost *:80>\n\
         AllowOverride All\n\
         Require all granted\n\
     </Directory>\n\
+    DirectoryIndex index.php index.html\n\
     ErrorLog ${APACHE_LOG_DIR}/error.log\n\
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/001-default.conf
@@ -31,8 +32,6 @@ WORKDIR /var/www/html
 COPY . /var/www/html/
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 storage \
-    && chmod -R 777 bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
